@@ -2,12 +2,25 @@
 import React from "react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { Button } from "../ui/button";
-import { Mail } from "lucide-react";
-import { useNewMailStore } from "@/hooks/new-mail-state";
+import { File, Mail } from "lucide-react";
+import { useNewMailStore, useUploadthing } from "@/hooks/new-mail-state";
+import { useSession } from "next-auth/react";
+import { createDraftEmail } from "@/actions/mailfrom";
+import FormUploadthing from "../Mail/uploadthing-form";
 
 function TrigerOpenSidebar() {
-  const setNewMail = useNewMailStore((state) => state.setNewMail);
+  const { data: session } = useSession();
+  const { setNewMail, setDraftId } = useNewMailStore();
+  const { setisUploadthingOpen } = useUploadthing();
+  const isNewMail = useNewMailStore((state) => state.isNewMailOpen);
 
+  const handleNewEmail = async () => {
+    if (session?.user?.id) {
+      const draft = await createDraftEmail(session.user.id);
+      setDraftId(draft.id);
+      setNewMail(true);
+    }
+  };
   return (
     <div>
       <div className="flex h-16 shrink-0 items-center gap-2">
@@ -15,13 +28,22 @@ function TrigerOpenSidebar() {
           <SidebarTrigger className="-ml-1" />
           <Button
             className="bg-blue-500 hover:bg-blue-300"
-            onClick={() => setNewMail(true)}
+            onClick={handleNewEmail}
           >
             <Mail />
             Correo nuevo
           </Button>
+          {isNewMail && (
+            <Button
+              className="bg-sidebar hover:bg-muted text-white"
+              onClick={() => setisUploadthingOpen(true)}
+            >
+              <File />
+            </Button>
+          )}
         </div>
       </div>
+      {isNewMail && <FormUploadthing />}
     </div>
   );
 }

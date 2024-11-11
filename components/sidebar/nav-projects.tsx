@@ -52,13 +52,13 @@ export function NavProjects() {
   useEffect(() => {
     const loadFavorites = async () => {
       const favs = await getFavorites();
-      setFavorites(favs);
+      setFavorites(favs || []);
     };
     loadFavorites();
   }, []);
 
   const favoriteItems = defaultSidebarItems.filter((item) =>
-    favorites.includes(item.id)
+    favorites?.includes(item.id)
   );
 
   const toggleFavorite = async (itemId: string) => {
@@ -70,14 +70,6 @@ export function NavProjects() {
       setFavorites(updatedFavs || []);
     }
   };
-
-  console.log(
-    "Sidebar items:",
-    defaultSidebarItems.map((item) => ({
-      label: item.label,
-      icon: item.iconName?.name,
-    }))
-  );
 
   return (
     <ScrollArea className="rounded-md ">

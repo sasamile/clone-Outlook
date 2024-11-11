@@ -35,12 +35,14 @@ model User {
   Identity      String?
   entity        Entity?
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  sentEmails     Email[]  @relation("SentEmails")
-  receivedEmails Email[]  @relation("ReceivedEmails")
-
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  sentEmails   Email[]  @relation("SentEmails")
   sidebarItems String[]
+
+  EmailRecipient EmailRecipient[]
+  UserEmailState UserEmailState[]
+  Comment        Comment[]
 }
 
 model Account {
@@ -65,28 +67,84 @@ model Account {
 }
 
 model Email {
-  id        String    @id @default(cuid())
-  subject   String
-  body      String
-  date      DateTime  @default(now())
-  read      Boolean   @default(false)
-  starred   Boolean   @default(false)
-  pinned    Boolean   @default(false)
-  folder    String    @default("INBOX")
-  archived  Boolean   @default(false)
-  deletedAt DateTime?
+  id      String   @id @default(cuid())
+  subject String?
+  body    String?
+  date    DateTime @default(now())
+  fromId  String
+  from    User     @relation("SentEmails", fields: [fromId], references: [id])
 
-  // Relaciones con User
-  fromId String
-  from   User   @relation("SentEmails", fields: [fromId], references: [id])
-  toId   String
-  to     User   @relation("ReceivedEmails", fields: [toId], references: [id])
+  toRecipients  EmailRecipient[] @relation("ToRecipients")
+  ccRecipients  EmailRecipient[] @relation("CcRecipients")
 
-  // Relaciones para respuestas y reenvíos
-  replyToId     String?
-  replyTo       Email?  @relation("Replies", fields: [replyToId], references: [id])
-  replies       Email[] @relation("Replies")
-  forwardedId   String?
-  forwardedFrom Email?  @relation("Forwards", fields: [forwardedId], references: [id])
-  forwards      Email[] @relation("Forwards")
+
+  attachments     Attachment[]
+  userStates      UserEmailState[]
+  comments        Comment[]
+  forwardedFrom   Email?           @relation("ForwardedEmails", fields: [forwardedFromId], references: [id])
+  forwardedFromId String?
+  forwardedTo     Email[]          @relation("ForwardedEmails")
+
+  @@index([fromId])
+}
+
+model EmailRecipient {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  toEmail   Email?  @relation("ToRecipients", fields: [toEmailId], references: [id])
+  toEmailId String?
+
+  ccEmail   Email?  @relation("CcRecipients", fields: [ccEmailId], references: [id])
+  ccEmailId String?
+
+  bccEmailId String?
+
+  @@index([userId])
+  @@index([toEmailId])
+  @@index([ccEmailId])
+  @@index([bccEmailId])
+}
+
+model UserEmailState {
+  id      String    @id @default(cuid())
+  userId  String
+  emailId String
+  isRead  Boolean   @default(false)
+  readAt  DateTime?
+  starred Boolean   @default(false)
+  folder  String    @default("inbox")
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email   Email     @relation(fields: [emailId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, emailId])
+  @@index([userId])
+  @@index([emailId])
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  type      String
+  createdAt DateTime @default(now())
+  emailId   String
+  email     Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+
+  @@index([emailId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailId   String
+  email     Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([emailId])
 }

@@ -11,6 +11,8 @@ import InitialAuthLayout from "@/components/auth/initial-auth-layout";
 import { CompletionForm } from "@/components/auth/completion-form";
 import { useNewMailStore } from "@/hooks/new-mail-state";
 import TrigerOpenSidebar from "@/components/sidebar/triger-open-sidebar";
+import { EmailDetail } from "@/components/Mail/detail-mail";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default async function LayuotPages({
   children,
@@ -29,7 +31,6 @@ export default async function LayuotPages({
     image: existingUser?.image!,
   };
 
-
   return (
     <>
       {missingEntityRelation && (
@@ -42,8 +43,17 @@ export default async function LayuotPages({
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
-          <TrigerOpenSidebar />
-            <main className="px-4 overflow-hidden">{children}</main>
+            <TrigerOpenSidebar />
+            <div className="flex gap-2 h-[calc(100vh-2rem)]">
+              <div className="px-4 w-2/5">
+                <ScrollArea className="h-full">{children}</ScrollArea>
+              </div>
+              <div className="bg-sidebar w-3/5 mr-8 rounded-xl">
+                <ScrollArea className="h-full">
+                  <EmailDetail />
+                </ScrollArea>
+              </div>
+            </div>
           </SidebarInset>
         </SidebarProvider>
       )}

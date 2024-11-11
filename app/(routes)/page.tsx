@@ -1,36 +1,47 @@
 "use client";
 
-import { EmailDetail } from "@/components/DetailEmail";
-import EmailPruebas, { emailsData } from "@/components/EmailRoute";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { FolderInboxMail } from "@/actions/folder-mail/send/inde";
+import EmailPruebas from "@/components/Mail/email-route";
 import { Separator } from "@/components/ui/separator";
+import { EmailResponse } from "@/types";
 import { Filter } from "lucide-react";
-import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import React from "react";
+import useSWR from "swr";
 
 function page() {
-  const [selectedEmail, setSelectedEmail] = useState<
-    (typeof emailsData)[0] | null
-  >(null);
-  return (
-    <div className="flex  gap-2">
-      <div className=" bg-sidebar rounded-md w-2/5 overflow-y-auto h-screen">
-        <div className="py-4 flex justify-between items-center px-4">
-          <h2 className="font-semibold ml-12">Bandeja de entrada</h2>
-          <Filter className="w-4 h-4" />
-        </div>
-        <Separator />
-        <EmailPruebas
-          selectedEmail={selectedEmail}
-          setSelectedEmail={setSelectedEmail}
-        />
-      </div>
+  const pathname = usePathname();
 
-      <div className="bg-sidebar w-3/5  overflow-hidden h-screen">
-        <EmailDetail
-          email={selectedEmail}
-          onClose={() => setSelectedEmail(null)}
-        />
+  const { data: sentEmails, isLoading } = useSWR(
+    pathname === "/" ? "inbox-emails" : null, // Solo cargar si estamos en /sent
+    async () => {
+      try {
+        const emails = await FolderInboxMail();
+        return emails as EmailResponse[];
+      } catch (error) {
+        console.error("Error fetching sent emails:", error);
+        return [];
+      }
+    },
+    {
+      refreshInterval: 5000,
+      revalidateOnFocus: true,
+      dedupingInterval: 2000, // Evita múltiples solicitudes en un corto período
+      keepPreviousData: false, // No mantener datos anteriores al cambiar de ruta
+    }
+  );
+  return (
+    <div className="bg-sidebar rounded-md h-full">
+      <div className="py-4 flex justify-between items-center px-4">
+        <h2 className="font-semibold ml-12">Bandeja de entrada</h2>
+        <Filter className="w-4 h-4" />
       </div>
+      <Separator />{" "}
+      {isLoading ? (
+        <div className="p-4 text-center">Cargando...</div>
+      ) : (
+        <EmailPruebas emails={sentEmails || []} key={pathname} />
+      )}
     </div>
   );
 }

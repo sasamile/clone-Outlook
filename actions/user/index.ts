@@ -56,3 +56,5 @@ export async function changeRole(userId: string, role: UserRole) {
     return { error: "Algo salió mal en la solicitud." }
   }
 }
+
+

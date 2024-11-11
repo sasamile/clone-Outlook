@@ -26,6 +26,12 @@ export const defaultSidebarItems = [
     path: "/sent",
   },
   {
+    id: "draft",
+    label: "Borradores",
+    iconName: File,
+    path: "/draft",
+  },
+  {
     id: "starred",
     label: "Destacados",
     iconName: Star,
