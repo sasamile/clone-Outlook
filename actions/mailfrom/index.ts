@@ -4,6 +4,7 @@ import { EmailFormValues } from "@/components/Mail/new-email";
 import { currentUser } from "@/lib/auth-user";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
+import { useUnreadCountsStore } from "@/hooks/use-unread-count";
 
 export async function searchUsers(query: string) {
   if (!query || query.length < 2) return [];
@@ -190,6 +191,8 @@ export async function updateEmailReadStatus(emailId: string) {
         readAt: new Date(),
       },
     });
+
+    useUnreadCountsStore.getState().updateCount('inbox', -1);
 
     return emailState;
   } catch (error) {

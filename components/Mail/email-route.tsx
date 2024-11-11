@@ -54,6 +54,7 @@ const groupEmailsByDate = (emails: EmailResponse[]) => {
 
 function EmailPruebas({ emails }: { emails: EmailResponse[] }) {
   const pathname = usePathname();
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const setSelectedEmail = useMailStore((state) => state.setSelectedEmail);
   const [openGroups, setOpenGroups] = useState<{ [key: string]: boolean }>({});
 
@@ -61,6 +62,21 @@ function EmailPruebas({ emails }: { emails: EmailResponse[] }) {
     setSelectedEmail(null);
     setOpenGroups({}); // Resetear grupos abiertos
   }, [pathname, setSelectedEmail]);
+
+  const handleSelectEmail = (emailId: string) => {
+    setSelectedEmails((prev) =>
+      prev.includes(emailId)
+        ? prev.filter((id) => id !== emailId)
+        : [...prev, emailId]
+    );
+  };
+
+  const handleSelectAll = (groupEmails: EmailResponse[]) => {
+    const groupIds = groupEmails.map((email) => email.id);
+    setSelectedEmails((prev) =>
+      prev.length === groupIds.length ? [] : groupIds
+    );
+  };
 
   const handleEmailClick = async (email: EmailResponse) => {
     try {
@@ -78,7 +94,7 @@ function EmailPruebas({ emails }: { emails: EmailResponse[] }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 cursor-pointer">
       {Object.entries(emailGroups).map(([date, groupEmails]) => (
         <Collapsible
           key={`${date}-${pathname}`}

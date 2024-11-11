@@ -40,6 +40,8 @@ import {
   removeFromFavorites,
 } from "@/actions/sidebar";
 import { ScrollArea } from "../ui/scroll-area";
+import { FolderType, useUnreadCountsStore } from "@/hooks/use-unread-count";
+import { getUnreadCounts } from "@/actions/counts";
 
 export function NavProjects() {
   const pathname = usePathname();
@@ -49,13 +51,28 @@ export function NavProjects() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const router = useRouter();
 
+  const { counts, setCounts, setLoading, setError } = useUnreadCountsStore();
+
   useEffect(() => {
-    const loadFavorites = async () => {
-      const favs = await getFavorites();
-      setFavorites(favs || []);
+    const loadUnreadCounts = async () => {
+      try {
+        setLoading(true);
+        const newCounts = await getUnreadCounts();
+        setCounts(newCounts);
+      } catch (error) {
+        setError(error as Error);
+      } finally {
+        setLoading(false);
+      }
     };
-    loadFavorites();
-  }, []);
+
+    loadUnreadCounts();
+
+    // Actualizar cada 30 segundos
+    const interval = setInterval(loadUnreadCounts, 1000);
+
+    return () => clearInterval(interval);
+  }, [setCounts, setLoading, setError]);
 
   const favoriteItems = defaultSidebarItems.filter((item) =>
     favorites?.includes(item.id)
@@ -168,6 +185,11 @@ export function NavProjects() {
                     <span className="truncate flex-grow group-data-[collapsible=icon]:hidden">
                       {item.label}
                     </span>
+                    {item.id in counts && counts[item.id as FolderType] > 0 && (
+                      <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        {counts[item.id as FolderType]}
+                      </span>
+                    )}
                   </SidebarMenuButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
