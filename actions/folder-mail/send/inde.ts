@@ -111,9 +111,14 @@ export const FolderInboxMail = async (): Promise<FolderSendMailResponse> => {
 
     const res = await db.email.findMany({
       where: {
-        AND: [
-          // Buscar emails donde el usuario tenga un estado y esté en inbox
+        OR: [
+          // Emails donde el usuario es destinatario directo (to)
           {
+            toRecipients: {
+              some: {
+                userId: user.id,
+              },
+            },
             userStates: {
               some: {
                 userId: user.id,
@@ -121,10 +126,18 @@ export const FolderInboxMail = async (): Promise<FolderSendMailResponse> => {
               },
             },
           },
-          // Excluir emails donde el usuario es el remitente
+          // Emails donde el usuario está en CC
           {
-            NOT: {
-              fromId: user.id,
+            ccRecipients: {
+              some: {
+                userId: user.id,
+              },
+            },
+            userStates: {
+              some: {
+                userId: user.id,
+                folder: "inbox",
+              },
             },
           },
         ],

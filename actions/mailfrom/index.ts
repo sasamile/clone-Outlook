@@ -79,6 +79,7 @@ export async function UpdateEmail({
   value,
   filesPreviews,
   draftId,
+  folder
 }: UpdateEmailProps) {
   const { body, ccRecipients, subject, toRecipients } = value;
   try {
@@ -123,7 +124,7 @@ export async function UpdateEmail({
               },
             },
             data: {
-              folder: "sent", // Cambiado de "send" a "sent"
+              folder: folder, // Cambiado de "send" a "sent"
             },
           },
           // Crear estados para todos los destinatarios

@@ -73,6 +73,7 @@ export default function NewEmail() {
         value: values,
         filesPreviews: filesPreviews,
         draftId: draftId || "",
+        folder:"sent"
       });
       useNewMailStore.getState().setDraftId(null);
       useNewMailStore.getState().setNewMail(false);
@@ -109,6 +110,7 @@ const getFileIcon = (fileType: string) => {
       const values = form.getValues();
       await UpdateEmail({
         value: values,
+        folder:"drafts",
         filesPreviews: filesPreviews.map((file) => ({
           ...file,
           id: "",
