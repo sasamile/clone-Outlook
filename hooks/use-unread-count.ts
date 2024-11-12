@@ -21,6 +21,7 @@ interface UnreadCountsStore {
   setLoading: (isLoading: boolean) => void;
   setError: (error: Error | null) => void;
   updateCount: (folder: FolderType, delta: number) => void;
+  decrementCount: (folder: FolderType) => void; // Nueva función
 }
 
 // Valores iniciales
@@ -45,6 +46,13 @@ export const useUnreadCountsStore = create<UnreadCountsStore>((set) => ({
       counts: {
         ...state.counts,
         [folder]: Math.max(0, state.counts[folder] + delta),
+      },
+    })),
+  decrementCount: (folder: FolderType) =>
+    set((state) => ({
+      counts: {
+        ...state.counts,
+        [folder]: Math.max(0, state.counts[folder] - 1),
       },
     })),
 }));

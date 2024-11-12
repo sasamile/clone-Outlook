@@ -44,11 +44,11 @@ export default async function LayuotPages({
           <AppSidebar />
           <SidebarInset>
             <TrigerOpenSidebar />
-            <div className="flex gap-2 h-[calc(100vh-2rem)]">
+            <div className="flex gap-2">
               <div className="px-4 w-2/5">
                 <ScrollArea className="h-full">{children}</ScrollArea>
               </div>
-              <div className="bg-sidebar w-3/5 mr-8 rounded-xl">
+              <div className="bg-sidebar w-3/5 mr-8  rounded-xl">
                 <ScrollArea className="h-full">
                   <EmailDetail />
                 </ScrollArea>

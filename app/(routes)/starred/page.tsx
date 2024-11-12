@@ -1,16 +1,26 @@
 "use client";
 
-import {FolderStarredMail } from "@/actions/folder-mail/send/inde";
+import { FolderStarredMail } from "@/actions/folder-mail/send/inde";
+import { getFavorites } from "@/actions/sidebar";
 import EmailPruebas from "@/components/Mail/email-route";
 import { Separator } from "@/components/ui/separator";
 import { EmailResponse } from "@/types";
-import { Filter } from "lucide-react";
+import { Filter, Star } from "lucide-react";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 
 function page() {
   const pathname = usePathname();
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      const userFavorites = await getFavorites();
+      setFavorites(userFavorites || []);
+    };
+    loadFavorites();
+  }, []);
 
   const { data: sentEmails, isLoading } = useSWR(
     pathname === "/starred" ? "starred-emails" : null, // Solo cargar si estamos en /sent
@@ -33,7 +43,16 @@ function page() {
   return (
     <div className="bg-sidebar rounded-md h-full">
       <div className="py-4 flex justify-between items-center px-4">
-        <h2 className="font-semibold ml-12">Destacado</h2>
+        <div className="flex items-center gap-2 ml-12">
+          <h2 className="font-semibold">Destacados</h2>
+          <Star
+            className={`w-4 h-4 ${
+              favorites.includes("starred")
+                ? "fill-yellow-400 text-yellow-400"
+                : "text-gray-400"
+            }`}
+          />
+        </div>
         <Filter className="w-4 h-4" />
       </div>
       <Separator />{" "}

@@ -1,5 +1,6 @@
 "use server"
 
+import { currentUser } from "@/lib/auth-user"
 import { db } from "@/lib/db"
 import { UserRole } from "@prisma/client"
 import { revalidatePath } from "next/cache"
@@ -58,3 +59,33 @@ export async function changeRole(userId: string, role: UserRole) {
 }
 
 
+export async function getEmailById(emailId: string) {
+  try {
+  
+    const email = await db.email.findUnique({
+      where: { id: emailId },
+      include: {
+        from: true,
+        toRecipients: {
+          include: { user: true }
+        },
+        attachments: true,
+        comments: {
+          include: {
+            user: true,
+            attachments: true
+          },
+          orderBy: {
+            createdAt: "desc"
+          }
+        },
+        userStates: true
+      }
+    });
+
+    return email;
+  } catch (error) {
+    console.error("Error fetching email:", error);
+    return null;
+  }
+}

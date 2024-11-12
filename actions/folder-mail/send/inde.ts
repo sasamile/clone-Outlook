@@ -88,6 +88,7 @@ export const FolderSendMail = async (): Promise<FolderSendMailResponse> => {
         comments: {
           include: {
             user: true,
+            attachments: true,
           },
         },
       },
@@ -218,6 +219,7 @@ export const FolderInboxMail = async (): Promise<FolderSendMailResponse> => {
         },
         comments: {
           include: {
+            attachments: true,
             user: {
               select: {
                 id: true,
@@ -348,6 +350,7 @@ export const FolderDraftsMail = async (): Promise<FolderSendMailResponse> => {
         },
         comments: {
           include: {
+            attachments: true,
             user: {
               select: {
                 id: true,
@@ -474,6 +477,7 @@ export const FolderStarredMail = async (): Promise<FolderSendMailResponse> => {
         },
         comments: {
           include: {
+            attachments: true,
             user: {
               select: {
                 id: true,
@@ -600,6 +604,7 @@ export const FolderTrashMail = async (): Promise<FolderSendMailResponse> => {
         },
         comments: {
           include: {
+            attachments: true,
             user: {
               select: {
                 id: true,
@@ -726,6 +731,7 @@ export const FolderArchivedMail = async (): Promise<FolderSendMailResponse> => {
         },
         comments: {
           include: {
+            attachments: true,
             user: {
               select: {
                 id: true,

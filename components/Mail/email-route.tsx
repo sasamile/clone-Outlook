@@ -15,6 +15,7 @@ import {
 import { usePathname } from "next/navigation";
 import { Checkbox } from "../ui/checkbox";
 import { useSelectedEmails } from "@/hooks/use-selected-email";
+import { useUnreadCountsStore } from "@/hooks/use-unread-count";
 
 // Función helper para agrupar emails por fecha
 const groupEmailsByDate = (emails: EmailResponse[]) => {
@@ -57,6 +58,7 @@ const groupEmailsByDate = (emails: EmailResponse[]) => {
 function EmailPruebas({ emails }: { emails: EmailResponse[] }) {
   const pathname = usePathname();
   const { selectedEmails, setSelectedEmails } = useSelectedEmails();
+  const { decrementCount } = useUnreadCountsStore();
 
   const setSelectedEmail = useMailStore((state) => state.setSelectedEmail);
 
@@ -96,6 +98,7 @@ function EmailPruebas({ emails }: { emails: EmailResponse[] }) {
       )
     );
   }, [pathname]);
+
   const handleEmailClick = async (email: EmailResponse) => {
     if (selectedEmails.length > 0) {
       const newSelectedEmails = selectedEmails.includes(email.id)
@@ -104,14 +107,26 @@ function EmailPruebas({ emails }: { emails: EmailResponse[] }) {
       setSelectedEmails(newSelectedEmails);
       return;
     }
-
+  
     try {
+      // Si el correo no está leído, decrementar el contador
+      if (!email.userStates[0]?.isRead) {
+        decrementCount("inbox"); // O la carpeta correspondiente
+        
+        // Actualizar el estado del correo localmente
+        email.userStates[0] = {
+          ...email.userStates[0],
+          isRead: true
+        };
+      }
+  
       await updateEmailReadStatus(email.id);
       setSelectedEmail(email);
     } catch (error) {
       console.error("Error handling email click:", error);
     }
   };
+
 
   const emailGroups = React.useMemo(() => groupEmailsByDate(emails), [emails]);
 

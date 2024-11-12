@@ -8,6 +8,17 @@ interface NewMailState {
   setDraftId: (id: string | null) => void;
 }
 
+interface ReplyToData {
+  to: {
+    id: string;
+    email: string;
+    name: string;
+  }[];
+  subject: string;
+  originalBody: string;
+  originalDate: string;
+}
+
 export const useNewMailStore = create<NewMailState>()((set) => ({
   isNewMailOpen: false,
   draftId: null,
@@ -15,14 +26,18 @@ export const useNewMailStore = create<NewMailState>()((set) => ({
   setDraftId: (id) => set({ draftId: id }),
 }));
 
-interface MailState {
+interface MailStore {
   selectedEmail: EmailResponse | null;
   setSelectedEmail: (email: EmailResponse | null) => void;
+  replyTo: ReplyToData | null;
+  setReplyTo: (data: ReplyToData | null) => void;
 }
 
-export const useMailStore = create<MailState>()((set) => ({
+export const useMailStore = create<MailStore>((set) => ({
   selectedEmail: null,
   setSelectedEmail: (email) => set({ selectedEmail: email }),
+  replyTo: null,
+  setReplyTo: (data) => set({ replyTo: data }),
 }));
 
 interface FilePreview {

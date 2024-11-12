@@ -1,6 +1,17 @@
 // Tipo para la respuesta del action
 export type FolderSendMailResponse = EmailResponse[] | { error: string; status: number };
 
+export interface EmailComment {
+  id: string;
+  content: string;
+  subject: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  user: EmailUser;
+  attachments?: EmailAttachment[]; // Made optional since it might not be present in all comments
+}
+
 export interface EmailResponse {
   id: string;
   subject: string | null;
@@ -8,12 +19,12 @@ export interface EmailResponse {
   date: Date;
   fromId: string;
   from: EmailUser;
-  userStates: EmailUserState[]; // Cambiado de UserEmailState a EmailUserState
+  userStates: EmailUserState[];
   attachments: EmailAttachment[];
   toRecipients: EmailRecipient[];
-  ccRecipients: EmailRecipient[];
-  forwardedTo: ForwardedEmail[];
-  forwardedFrom: ForwardedEmail | null;
+  ccRecipients?: EmailRecipient[];
+  forwardedTo?: ForwardedEmail[];
+  forwardedFrom?: ForwardedEmail | null;
   comments: EmailComment[];
 }
 
@@ -47,14 +58,6 @@ export interface EmailRecipient {
   user: EmailUser;
 }
 
-export interface EmailComment {
-  id: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-  userId: string;
-  user: EmailUser;
-}
 
 export interface ForwardedEmail {
   id: string;

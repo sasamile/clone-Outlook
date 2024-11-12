@@ -85,7 +85,7 @@ export default function NewEmail() {
     }
   };
 
-  const getFileIcon = (fileType: string) => {
+const getFileIcon = (fileType: string) => {
     if (fileType.includes("image")) return <FileImage className="w-8 h-8" />;
     if (fileType.includes("pdf"))
       return <BsFileEarmarkPdfFill className="w-8 h-8" />;

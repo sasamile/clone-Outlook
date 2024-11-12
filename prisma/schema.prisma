@@ -74,9 +74,8 @@ model Email {
   fromId  String
   from    User     @relation("SentEmails", fields: [fromId], references: [id])
 
-  toRecipients  EmailRecipient[] @relation("ToRecipients")
-  ccRecipients  EmailRecipient[] @relation("CcRecipients")
-
+  toRecipients EmailRecipient[] @relation("ToRecipients")
+  ccRecipients EmailRecipient[] @relation("CcRecipients")
 
   attachments     Attachment[]
   userStates      UserEmailState[]
@@ -136,15 +135,29 @@ model Attachment {
 }
 
 model Comment {
-  id        String   @id @default(cuid())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  emailId   String
-  email     Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  id          String              @id @default(cuid())
+  subject     String?
+  content     String
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailId     String
+  email       Email               @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  attachments CommentAttachment[]
 
   @@index([userId])
   @@index([emailId])
+}
+
+model CommentAttachment {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  type      String
+  createdAt DateTime @default(now())
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([commentId])
 }

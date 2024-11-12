@@ -46,7 +46,7 @@ function TrigerOpenSidebar() {
           )}
         </div>
       </div>
-      {isNewMail && <FormUploadthing />}
+       <FormUploadthing />
     </div>
   );
 }

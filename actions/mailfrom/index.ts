@@ -171,14 +171,6 @@ export async function updateEmailReadStatus(emailId: string) {
     if (!user) {
       throw new Error("User not authorized");
     }
-    const currentState = await db.userEmailState.findUnique({
-      where: {
-        userId_emailId: {
-          userId: user.id,
-          emailId: emailId,
-        },
-      },
-    });
 
     // Buscar o crear el estado del email para este usuario
     const emailState = await db.userEmailState.upsert({
@@ -200,7 +192,7 @@ export async function updateEmailReadStatus(emailId: string) {
       },
     });
 
-    useUnreadCountsStore.getState().updateCount("inbox", -1);
+    useUnreadCountsStore.getState().updateCount('inbox', -1);
 
     return emailState;
   } catch (error) {
@@ -208,3 +200,4 @@ export async function updateEmailReadStatus(emailId: string) {
     throw new Error("Failed to update email read status");
   }
 }
+
