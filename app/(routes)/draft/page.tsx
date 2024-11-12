@@ -44,7 +44,7 @@ function page() {
     <div className="bg-sidebar rounded-md h-full">
       <div className="py-4 flex justify-between items-center px-4">
         <div className="flex items-center gap-2 ml-12">
-          <h2 className="font-semibold">Bandeja de entrada</h2>
+          <h2 className="font-semibold">Borradores</h2>
           <Star
             className={`w-4 h-4 ${
               favorites.includes("draft")
