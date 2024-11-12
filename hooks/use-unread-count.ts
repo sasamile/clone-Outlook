@@ -7,7 +7,7 @@ export type FolderType =
   | "drafts"
   | "starred"
   | "trash"
-  | "archived";
+  | "archive";
 
 // Interface para los contadores usando Record
 export type UnreadCounts = Record<FolderType, number>;
@@ -30,7 +30,7 @@ const initialCounts: UnreadCounts = {
   drafts: 0,
   starred: 0,
   trash: 0,
-  archived: 0,
+  archive: 0,
 };
 
 export const useUnreadCountsStore = create<UnreadCountsStore>((set) => ({

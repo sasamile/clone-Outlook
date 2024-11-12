@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { signOut } from "next-auth/react";
+import { Button } from "../ui/button";
 
 export function NavUser({
   user,
@@ -109,8 +110,13 @@ export function NavUser({
               onClick={() => signOut()}
               className="cursor-pointer"
             >
-              <LogOut />
-              Log out
+              <Button
+                className="flex justify-center gap-2 items-center w-full"
+                onClick={() => signOut()}
+              >
+                <LogOut />
+                Log out
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -24,9 +24,9 @@ function page() {
       }
     },
     {
-      refreshInterval: 1000,
+      refreshInterval: 2000,
       revalidateOnFocus: true,
-      dedupingInterval: 1000, // Evita múltiples solicitudes en un corto período
+      dedupingInterval: 2000, // Evita múltiples solicitudes en un corto período
       keepPreviousData: false, // No mantener datos anteriores al cambiar de ruta
     }
   );

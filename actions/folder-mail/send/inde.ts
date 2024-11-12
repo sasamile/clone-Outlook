@@ -230,7 +230,7 @@ export const FolderInboxMail = async (): Promise<FolderSendMailResponse> => {
         },
       },
       orderBy: {
-        date: 'desc',
+        date: "desc",
       },
     });
 
@@ -242,73 +242,6 @@ export const FolderInboxMail = async (): Promise<FolderSendMailResponse> => {
 };
 
 // Función helper para incluir las relaciones comunes
-const commonIncludes = {
-  from: {
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-    },
-  },
-  attachments: true,
-  userStates: {
-    include: {
-      user: true,
-    },
-  },
-  toRecipients: {
-    include: {
-      user: true,
-    },
-  },
-  ccRecipients: {
-    include: {
-      user: true,
-    },
-  },
-  forwardedTo: {
-    select: {
-      id: true,
-      subject: true,
-      body: true,
-      date: true,
-      fromId: true,
-      from: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-        },
-      },
-    },
-  },
-  forwardedFrom: {
-    select: {
-      id: true,
-      subject: true,
-      body: true,
-      date: true,
-      fromId: true,
-      from: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-        },
-      },
-    },
-  },
-  comments: {
-    include: {
-      user: true,
-    },
-  },
-};
-
-
 
 // Borradores
 export const FolderDraftsMail = async (): Promise<FolderSendMailResponse> => {
@@ -325,8 +258,108 @@ export const FolderDraftsMail = async (): Promise<FolderSendMailResponse> => {
           },
         },
       },
-      include: commonIncludes,
-      orderBy: { date: 'desc' },
+      include: {
+        from: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+        attachments: {
+          select: {
+            id: true,
+            name: true,
+            url: true,
+            type: true,
+            createdAt: true,
+          },
+        },
+        userStates: {
+          where: {
+            userId: user.id,
+          },
+          select: {
+            id: true,
+            isRead: true,
+            readAt: true,
+            starred: true,
+            folder: true,
+          },
+        },
+        toRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        ccRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedTo: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedFrom: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { date: "desc" },
     });
 
     return res as EmailResponse[];
@@ -347,12 +380,112 @@ export const FolderStarredMail = async (): Promise<FolderSendMailResponse> => {
         userStates: {
           some: {
             userId: user.id,
-            starred: true,
+            folder: "starred",
           },
         },
       },
-      include: commonIncludes,
-      orderBy: { date: 'desc' },
+      include: {
+        from: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+        attachments: {
+          select: {
+            id: true,
+            name: true,
+            url: true,
+            type: true,
+            createdAt: true,
+          },
+        },
+        userStates: {
+          where: {
+            userId: user.id,
+          },
+          select: {
+            id: true,
+            isRead: true,
+            readAt: true,
+            starred: true,
+            folder: true,
+          },
+        },
+        toRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        ccRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedTo: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedFrom: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { date: "desc" },
     });
 
     return res as EmailResponse[];
@@ -377,8 +510,108 @@ export const FolderTrashMail = async (): Promise<FolderSendMailResponse> => {
           },
         },
       },
-      include: commonIncludes,
-      orderBy: { date: 'desc' },
+      include: {
+        from: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+        attachments: {
+          select: {
+            id: true,
+            name: true,
+            url: true,
+            type: true,
+            createdAt: true,
+          },
+        },
+        userStates: {
+          where: {
+            userId: user.id,
+          },
+          select: {
+            id: true,
+            isRead: true,
+            readAt: true,
+            starred: true,
+            folder: true,
+          },
+        },
+        toRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        ccRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedTo: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedFrom: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { date: "desc" },
     });
 
     return res as EmailResponse[];
@@ -399,12 +632,112 @@ export const FolderArchivedMail = async (): Promise<FolderSendMailResponse> => {
         userStates: {
           some: {
             userId: user.id,
-            folder: "archived",
+            folder: "archive",
           },
         },
       },
-      include: commonIncludes,
-      orderBy: { date: 'desc' },
+      include: {
+        from: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+        attachments: {
+          select: {
+            id: true,
+            name: true,
+            url: true,
+            type: true,
+            createdAt: true,
+          },
+        },
+        userStates: {
+          where: {
+            userId: user.id,
+          },
+          select: {
+            id: true,
+            isRead: true,
+            readAt: true,
+            starred: true,
+            folder: true,
+          },
+        },
+        toRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        ccRecipients: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedTo: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        forwardedFrom: {
+          select: {
+            id: true,
+            subject: true,
+            body: true,
+            date: true,
+            fromId: true,
+            from: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { date: "desc" },
     });
 
     return res as EmailResponse[];

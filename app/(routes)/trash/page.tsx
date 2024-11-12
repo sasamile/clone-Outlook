@@ -1,21 +1,22 @@
 "use client";
 
+import {FolderTrashMail } from "@/actions/folder-mail/send/inde";
 import EmailPruebas from "@/components/Mail/email-route";
 import { Separator } from "@/components/ui/separator";
-import { Filter } from "lucide-react";
-import React from "react";
-import { FolderSendMail } from "@/actions/folder-mail/send/inde";
 import { EmailResponse } from "@/types";
-import useSWR from "swr";
+import { Filter } from "lucide-react";
 import { usePathname } from "next/navigation";
+import React from "react";
+import useSWR from "swr";
 
-function SentPages() {
+function page() {
   const pathname = usePathname();
+
   const { data: sentEmails, isLoading } = useSWR(
-    pathname === "/sent" ? "sent-emails" : null, // Solo cargar si estamos en /sent
+    pathname === "/trash" ? "trash-emails" : null, // Solo cargar si estamos en /sent
     async () => {
       try {
-        const emails = await FolderSendMail();
+        const emails = await FolderTrashMail();
         return emails as EmailResponse[];
       } catch (error) {
         console.error("Error fetching sent emails:", error);
@@ -23,20 +24,19 @@ function SentPages() {
       }
     },
     {
-      refreshInterval: 1000,
+      refreshInterval: 2000,
       revalidateOnFocus: true,
-      dedupingInterval: 1000, // Evita múltiples solicitudes en un corto período
+      dedupingInterval: 2000, // Evita múltiples solicitudes en un corto período
       keepPreviousData: false, // No mantener datos anteriores al cambiar de ruta
     }
   );
-
   return (
     <div className="bg-sidebar rounded-md h-full">
       <div className="py-4 flex justify-between items-center px-4">
-        <h2 className="font-semibold ml-12">Enviados</h2>
+        <h2 className="font-semibold ml-12">Papelera</h2>
         <Filter className="w-4 h-4" />
       </div>
-      <Separator />
+      <Separator />{" "}
       {isLoading ? (
         <div className="p-4 text-center">Cargando...</div>
       ) : (
@@ -46,4 +46,4 @@ function SentPages() {
   );
 }
 
-export default SentPages;
+export default page;

@@ -21,17 +21,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   ChevronDown,
   ChevronRight,
-  ChevronUp,
   Folder,
   MoreHorizontal,
-  Share,
-  Trash2,
+
 } from "lucide-react";
 import { defaultSidebarItems } from "@/constants";
 import {
@@ -52,6 +49,14 @@ export function NavProjects() {
   const router = useRouter();
 
   const { counts, setCounts, setLoading, setError } = useUnreadCountsStore();
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      const userFavorites = await getFavorites();
+      setFavorites(userFavorites || []);
+    };
+    loadFavorites();
+  }, []);
 
   useEffect(() => {
     const loadUnreadCounts = async () => {
@@ -119,6 +124,14 @@ export function NavProjects() {
                     <span className="truncate flex-grow group-data-[collapsible=icon]:hidden">
                       {item.label}
                     </span>
+                    {counts &&
+                      item.id in counts &&
+                      item.id === "inbox" && // Solo mostrar contador para inbox
+                      counts[item.id as FolderType] > 0 && (
+                        <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                          {counts[item.id as FolderType]}
+                        </span>
+                      )}
                   </SidebarMenuButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -185,11 +198,13 @@ export function NavProjects() {
                     <span className="truncate flex-grow group-data-[collapsible=icon]:hidden">
                       {item.label}
                     </span>
-                    {item.id in counts && counts[item.id as FolderType] > 0 && (
-                      <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
-                        {counts[item.id as FolderType]}
-                      </span>
-                    )}
+                    {counts &&
+                      item.id in counts &&
+                      counts[item.id as FolderType] > 0 && (
+                        <span className="ml-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded-full">
+                          {counts[item.id as FolderType]}
+                        </span>
+                      )}
                   </SidebarMenuButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

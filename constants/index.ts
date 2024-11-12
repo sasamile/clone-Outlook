@@ -1,14 +1,4 @@
-import {
-  AlertCircle,
-  Archive,
-  Clock,
-  File,
-  Inbox,
-  Mail,
-  Send,
-  Star,
-  Trash,
-} from "lucide-react";
+import { Archive, File, Inbox, Send, Star, Trash } from "lucide-react";
 
 export const entities = ["Piedemonte", "Cliente"];
 
@@ -38,12 +28,6 @@ export const defaultSidebarItems = [
     path: "/starred",
   },
   {
-    id: "spam",
-    label: "Spam",
-    iconName: Clock,
-    path: "/spam",
-  },
-  {
     id: "trash",
     label: "Papelera",
     iconName: Trash,
@@ -54,17 +38,5 @@ export const defaultSidebarItems = [
     label: "Archivo",
     iconName: Archive,
     path: "/archive",
-  },
-  {
-    id: "all",
-    label: "Todos los correos",
-    iconName: Mail,
-    path: "/all",
-  },
-  {
-    id: "important",
-    label: "Importantes",
-    iconName: AlertCircle,
-    path: "/important",
   },
 ];

@@ -7,6 +7,7 @@ import { useNewMailStore, useUploadthing } from "@/hooks/new-mail-state";
 import { useSession } from "next-auth/react";
 import { createDraftEmail } from "@/actions/mailfrom";
 import FormUploadthing from "../Mail/uploadthing-form";
+import { EmailActionsDropdown } from "../Mail/email-actions-dropdown";
 
 function TrigerOpenSidebar() {
   const { data: session } = useSession();
@@ -33,6 +34,8 @@ function TrigerOpenSidebar() {
             <Mail />
             Correo nuevo
           </Button>
+          <EmailActionsDropdown />
+
           {isNewMail && (
             <Button
               className="bg-sidebar hover:bg-muted text-white"

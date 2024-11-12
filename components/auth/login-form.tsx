@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Router } from "lucide-react";
 
@@ -23,8 +23,10 @@ import { PasswordInput } from "@/components/auth/password-input";
 import { login } from "@/actions/auth";
 import { FormStateMessage } from "./form-state-message";
 import { toast } from "sonner";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [error, setError] = useState<string | undefined>(undefined);
@@ -52,7 +54,12 @@ export function LoginForm() {
     try {
       const response = await login(values);
 
-      setError(response?.error);
+      if (response?.error) {
+        setError(response.error);
+      } else {
+        router.push(DEFAULT_LOGIN_REDIRECT);
+        window.location.reload(); // Esto forzará una actualización completa
+      }
 
       if (!response?.error) {
         form.reset();

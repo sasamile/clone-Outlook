@@ -8,13 +8,15 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { getUserByEmail } from "@/actions/user";
 
+import { DEFAULT_LOGIN_REDIRECT, DEFAULT_AUTH_REDIRECT } from "@/routes";
+
 import {
   CompleteRegisterFormSchema,
   LoginFormSchema,
   RegisterFormSchema,
 } from "@/schemas/auth";
 import { currentUser } from "@/lib/auth-user";
-import { DEFAULT_AUTH_REDIRECT } from "@/routes";
+import { revalidatePath } from "next/cache";
 
 export async function login(credentials: z.infer<typeof LoginFormSchema>) {
   const result = LoginFormSchema.safeParse(credentials);
@@ -29,7 +31,7 @@ export async function login(credentials: z.infer<typeof LoginFormSchema>) {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: process.env.DEFAULT_LOGIN_REDIRECT,
+      redirect: false,
     });
   } catch (error) {
     if (error instanceof AuthError) {
